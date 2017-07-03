@@ -59,6 +59,11 @@
   [---------------------
    (⊢ Γ false : B)]
 
+  ;; (intro-var)
+  [(where τ (lookup Γ x))
+   --------------------
+   (⊢ Γ x : τ)]
+
   ;; (abst)
   [(⊢ (ext Γ (x : τ)) e : τ_0)
    -----------------------------------
@@ -99,8 +104,13 @@
    (--> (if true e_1 e_2) e_1 "ift")
    (--> (if false e_1 e_2) e_2 "iff")
    (--> ((λ (x τ) e) v) (subst x v e) "βv")
-   (--> ((μ (x τ) e)) (subst x (μ (x τ) e) e) "μv")))
-   
-        
-   
-   
+   (--> ((μ (x τ) e)) (subst x (μ (x τ) e) e) "μv"))) ;; (TODO) :: Add the Reduction Rules for (Op)
+
+(define -->red
+  (compatible-closure red PCF e)) ;; M --> Pattern that's allowed for Reduction
+
+
+;; Tests
+(test-equal
+ (judgment-holds (⊢ () (λ (x N) x) : τ))
+ (term #t))
