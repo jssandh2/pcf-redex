@@ -3,6 +3,10 @@
 (require redex)
 (require scribble/latex-properties)
 (require redex/tut-subst)
+(provide PCF)
+(provide red)
+(provide -->red ⊢)
+(provide ext lookup different)
 
 ;; Definition of the PCF Language
 (define-language PCF
@@ -22,7 +26,8 @@
   (Γ ::= ((x : τ) ...))
   
   ;; Evaluation Context
-  (E ::= hole (E e) (v E) (if E e e))) ;; (TODO) :: Eval Contexts for 'operators' : (op E) (E op e) (v op E)))
+  (E ::= hole (E e) (v E) (if E e e))) ;; (TODO) :: (@jus, @adam) - Eval Contexts for 'operators' : (op E) (E op e) (v op E)))
+
 
 ;; "Meta" :: Allows you to change and add functionality to the context \Gamma
 
@@ -48,15 +53,15 @@
   #:contract (⊢ Γ e : τ)
 
   ;; (intro-number)
-  [-----------------
+  [----------------
    (⊢ Γ n : N)]
 
   ;; (intro-true)
-  [--------------------
+  [---------------
    (⊢ Γ true : B)]
 
   ;; (intro-false)
-  [---------------------
+  [----------------
    (⊢ Γ false : B)]
 
   ;; (intro-var)
@@ -66,31 +71,31 @@
 
   ;; (abst)
   [(⊢ (ext Γ (x : τ)) e : τ_0)
-   -----------------------------------
+   ------------------------------
    (⊢ Γ (λ (x τ) e) : (τ → τ_0))] 
 
   ;; (appl)
   [(⊢ Γ e_0 : (τ_0 → τ_1))
    (⊢ Γ e_1 : τ_0)
-   -----------------------------
+   ----------------------
    (⊢ Γ (e_0 e_1) : τ_1)]
 
   ;; (if-then-else)
   [(⊢ Γ e_0 : τ)
    (⊢ Γ e_1 : τ)
    (⊢ Γ e_2 : τ)
-   -------------------
+   ---------------------------
    (⊢ Γ (if e_0 e_1 e_2) : τ)]
 
   ;; (rec)
   [(⊢ ((x : τ) Γ) e : τ)
-   ---------------------------
+   -----------------------
    (⊢ Γ (μ (x τ) e) : τ)])
 
 
 
 ;; Define the metafunction to lift Substitution into Redex
-(define x? (redex-match PCF x)) ;; Verifies that the given 'x' belongs to the Grammar of PCF+\Gamma
+(define x? (redex-match PCF x)) ;; Verifies that the given 'x' belongs to the Grammar of PCF
 
 (define-metafunction PCF
   subst : x v e -> e
@@ -104,13 +109,7 @@
    (--> (if true e_1 e_2) e_1 "ift")
    (--> (if false e_1 e_2) e_2 "iff")
    (--> ((λ (x τ) e) v) (subst x v e) "βv")
-   (--> ((μ (x τ) e)) (subst x (μ (x τ) e) e) "μv"))) ;; (TODO) :: Add the Reduction Rules for (Op)
+   (--> ((μ (x τ) e)) (subst x (μ (x τ) e) e) "μv"))) ;; (TODO) :: (@jus,@adam) - Add the Reduction Rules for (Op)
 
 (define -->red
-  (compatible-closure red PCF e)) ;; M --> Pattern that's allowed for Reduction
-
-
-;; Tests
-(test-equal
- (judgment-holds (⊢ () (λ (x N) x) : τ))
- (term #t))
+  (compatible-closure red PCF e)) ;; e --> Pattern that's allowed for Reduction
