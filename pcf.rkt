@@ -19,12 +19,12 @@
   (b ::= true false n)
   (n ::= number)
   (τ ::= B N (τ → τ))
-  
+
   (x ::= variable-not-otherwise-mentioned)
-  
+
   ;; Context
   (Γ ::= ((x : τ) ...))
-  
+
   ;; Evaluation Context
   (E ::= hole (E e) (v E) (if E e e))) ;; (TODO) :: (@jus, @adam) - Eval Contexts for 'operators' : (op E) (E op e) (v op E)))
 
@@ -32,11 +32,11 @@
 ;; "Meta" :: Allows you to change and add functionality to the context \Gamma
 
 ;; Extends the Context \Gamma with a new Term
-(define-metafunction PCF  
+(define-metafunction PCF
   [(ext ((x_0 : τ_0) ...) (x : τ))
    ((x : τ) (x_0 : τ_0) ...)])
 
-;; Looks up the Context to find the type \tau for a particular x \in \Gamma 
+;; Looks up the Context to find the type \tau for a particular x \in \Gamma
 (define-metafunction PCF
   [(lookup ((x : τ) (x_0 : τ_0) ...) x) τ]
   [(lookup ((x_0 : τ_0) (x_1 : τ_1) ...) x)
@@ -72,7 +72,7 @@
   ;; (abst)
   [(⊢ (ext Γ (x : τ)) e : τ_0)
    ------------------------------
-   (⊢ Γ (λ (x τ) e) : (τ → τ_0))] 
+   (⊢ Γ (λ (x τ) e) : (τ → τ_0))]
 
   ;; (appl)
   [(⊢ Γ e_0 : (τ_0 → τ_1))
@@ -106,10 +106,14 @@
   (reduction-relation
    PCF
    #:domain e ;; Hints as to which sub-term to begin reducing
-   (--> (if true e_1 e_2) e_1 "ift")
-   (--> (if false e_1 e_2) e_2 "iff")
-   (--> ((λ (x τ) e) v) (subst x v e) "βv")
-   (--> ((μ (x τ) e)) (subst x (μ (x τ) e) e) "μv"))) ;; (TODO) :: (@jus,@adam) - Add the Reduction Rules for (Op)
+   (--> (in-hole E (if true e_1 e_2))
+        (in-hole E e_1) "ift")
+   (--> (in-hole E (if false e_1 e_2))
+        (in-hole E e_2) "iff")
+   (--> (in-hole E ((λ (x τ) e) v))
+        (in-hole E (subst x v e)) "βv")
+   (--> (in-hole E ((μ (x τ) e)))
+        (in-hole E (subst x (μ (x τ) e) e)) "μv"))) ;; (TODO) :: (@jus,@adam) - Add the Reduction Rules for (Op)
 
 (define -->red
   (compatible-closure red PCF e)) ;; e --> Pattern that's allowed for Reduction
