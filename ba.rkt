@@ -3,12 +3,12 @@
 (require redex/tut-subst)
 
 (define-language BA
-  (t ::= true
+  (t ::= v
+     true
      false
      (if t t t)
-     (n)
-     (succ n)
-     (pred n)
+     (succ t)
+     (pred t)
      (zero t))
   (p ::= t)
   (b ::= true false)
@@ -18,7 +18,7 @@
   (o ::= v err)
 
   ;; Evaluation Context
-  (E ::= hole (if E p p) (succ E) (pred E) (zero? E)))
+  (E ::= hole (if E p p) (succ E) (pred E) (zero E)))
 
 ;; Define the metafunction to lift Substitution into Redex
 (define x? (redex-match BA x)) ;; Verifies that the given 'x' belongs to the Grammar of PCF
@@ -31,17 +31,17 @@
 (define red
   (reduction-relation
    BA
-   #:domain t
-   (--> (in-hole E (if true t_1 t_2)) t_1 "ift")
-   (--> (in-hole E (if false t_1 t_2)) t_2 "iff")
+   #:domain p
+   (--> (in-hole E (if true p_1 p_2)) (in-hole E p_1) "ift")
+   (--> (in-hole E (if false p_1 p_2)) (in-hole E p_2) "iff")
    (--> (in-hole E (pred 0)) underflow "underflow")
-   (--> (pred n) (- (term n) 1) "predecessor")
-   (--> (succ n) (+ (term n) 1) "successor")))
+   (--> (in-hole E (pred v)) (term (- v 1)) "predecessor")
+   (--> (in-hole E (succ v)) (term (+ v 1)) "successor")))
 
-  
 
-  
 
-  
-     
-     
+
+
+
+
+
