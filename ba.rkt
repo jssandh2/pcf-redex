@@ -35,8 +35,8 @@
    (--> (in-hole E (if true p_1 p_2)) (in-hole E p_1) "ift")
    (--> (in-hole E (if false p_1 p_2)) (in-hole E p_2) "iff")
    (--> (in-hole E (pred 0)) underflow "underflow")
-   (--> (in-hole E (pred v)) (term (- v 1)) "predecessor")
-   (--> (in-hole E (succ v)) (term (+ v 1)) "successor")))
+   (--> (in-hole E (pred n)) ,(- (term n) 1) "predecessor")
+   (--> (in-hole E (succ n)) ,(+ (term n) 1) "successor")))
 
 
 
