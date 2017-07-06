@@ -17,7 +17,7 @@
   (n ::= number)
   (err ::= mismatch underflow)
   (c ::= p err)
-  (o ::= p err))
+  (o ::= p err)
 
 ;; Evaluation Context
   (E ::= hole (if E p p) (succ E) (pred E) (zero? E)))
