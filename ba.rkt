@@ -48,10 +48,5 @@
    (--> (in-hole E (succ n)) ,(+ (term n) 1) "successor")
    (--> (in-hole E (zero? n)) ,(if (equal? (term n) 0) (term true) (term false)))))
 
-
-
-
-
-
-
-
+(define -->red
+  (compatible-closure red BA o))
