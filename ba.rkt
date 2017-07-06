@@ -34,12 +34,19 @@
    #:domain o
    (--> (in-hole E (if true p_1 p_2)) (in-hole E p_1) "ift")
    (--> (in-hole E (if false p_1 p_2)) (in-hole E p_2) "iff")
+   (--> (in-hole E (if p_1 p_2 p_3)) mismatch
+        (side-condition (not
+                         (cond
+                          [(equal? (term p) true) "mismatch"]
+                          [(equal? (term p) false) "mismatch"])))
+        "mismatch")
    (--> (in-hole E (pred 0)) underflow "underflow")
    (--> (in-hole E (pred n))
         ,(- (term n) 1)
         (side-condition (not (equal? (term n) 0)))
         "predecessor")
-   (--> (in-hole E (succ n)) ,(+ (term n) 1) "successor")))
+   (--> (in-hole E (succ n)) ,(+ (term n) 1) "successor")
+   (--> (in-hole E (zero? n)) ,(if (equal? (term n) 0) (term true) (term false)))))
 
 
 
