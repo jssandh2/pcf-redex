@@ -9,16 +9,16 @@
      (if t t t)
      (succ t)
      (pred t)
-     (zero t))
+     (zero? t))
   (p ::= t)
   (b ::= true false)
   (v ::= b n)
   (n ::= number)
   (err ::= mismatch underflow)
-  (o ::= v err)
+  (o ::= p err)
 
   ;; Evaluation Context
-  (E ::= hole (if E p p) (succ E) (pred E) (zero E)))
+  (E ::= hole (if E p p) (succ E) (pred E) (zero? E)))
 
 ;; Define the metafunction to lift Substitution into Redex
 (define x? (redex-match BA x)) ;; Verifies that the given 'x' belongs to the Grammar of PCF
@@ -31,11 +31,14 @@
 (define red
   (reduction-relation
    BA
-   #:domain p
+   #:domain o
    (--> (in-hole E (if true p_1 p_2)) (in-hole E p_1) "ift")
    (--> (in-hole E (if false p_1 p_2)) (in-hole E p_2) "iff")
    (--> (in-hole E (pred 0)) underflow "underflow")
-   (--> (in-hole E (pred n)) ,(- (term n) 1) "predecessor")
+   (--> (in-hole E (pred n))
+        ,(- (term n) 1)
+        (side-condition (not (equal? (term n) 0)))
+        "predecessor")
    (--> (in-hole E (succ n)) ,(+ (term n) 1) "successor")))
 
 
