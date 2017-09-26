@@ -68,15 +68,15 @@
 ;; Reduction Semantics
 (define red
   (reduction-relation
+   TBA
    #:domain o
    (--> (in-hole E (if true t1 t2)) (in-hole E t1) "ift")
    (--> (in-hole E (if false t1 t2)) (in-hole E t2) "iff")
    (--> (in-hole E (zero? n)) false (side-condition
-                                    (not (equals? (term n) 0)))
+                                    (not (equal? (term n) 0)))
         "zero?n")
    (--> (in-hole E (zero? 0)) true "zero?0")))
-   
-                             
+ 
    
 
    
